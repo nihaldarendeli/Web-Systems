@@ -42,7 +42,13 @@ public class processImages extends HttpServlet {
         DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
 
         String userID = (String)request.getParameter("userID");
-        ArrayList<String> photoID = new ArrayList<String>(request.getParameterValues("photoID"));
+        //line spacer for error
+        //line spacer for error
+        //line spacer for error
+        //line spacer for error
+        //line spacer for error
+        //line spacer for error
+        ArrayList<String> photoID = new ArrayList<String>(Arrays.asList(request.getParameterValues("photoID")));
         ArrayList<String> imageLinks = new ArrayList<String>(Arrays.asList(request.getParameterValues("imageLinks")));
         System.out.println(imageLinks);
 
