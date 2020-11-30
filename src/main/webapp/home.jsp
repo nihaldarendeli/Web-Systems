@@ -52,7 +52,7 @@
     //CALL FB.init
     window.fbAsyncInit = function() {
         FB.init({
-            appId      : '474775356772537',
+            appId      : '874548586626136',
             cookie     : true,  // enable cookies to allow the server to access
             // the session
             xfbml      : true,  // parse social plugins on this page
@@ -107,7 +107,6 @@
             document.getElementById('userID').value = userID;
         });
 
-        // session.setAttribute("userID", userID);
 
     }
 
@@ -120,9 +119,7 @@
         var imageID = new Array();
         FB.api('me/albums?fields=photos.limit(3){webp_images}&limit=2', function(response) {
 
-            // console.log('1: Successful login for: ' + response.name);
             var albums = response.data;
-            // console.log(albums);
 
             albums.forEach(album => {
                 console.log("album")
@@ -134,16 +131,6 @@
                     photos.data.forEach(photo => {
                         imageLinks.push(photo.webp_images[0].source)
                         imageID.push(photo.id)
-                        // var form = document.getElementById('form_home')
-                        // let imageLinkValue = document.createElement('input')
-                        // imageLinkValue.setAttribute('type', 'hidden')
-                        // imageLinkValue.setAttribute('name', 'imageLinks')
-                        // imageLinkValue.setAttribute('value', photo.webp_images[0].source)
-                        //
-                        // let imageIDValue = document.createElement('input')
-                        // imageLinkValue.setAttribute('type', 'hidden')
-                        // imageLinkValue.setAttribute('name', 'imageID')
-                        // imageLinkValue.setAttribute('value', photo.id)
 
                     });
                 }
@@ -153,16 +140,7 @@
             document.getElementById('imageID').value = imageID;
             console.log(imageID);
             console.log(imageLinks);
-            //document.getElementById("form_home").submit();
 
-
-
-            // session.setAttribute("imageLinks", imageLinks);
-            // session.setAttribute("photoID", imageID);
-
-
-            // document.getElementById('status').innerHTML =
-            //     'Thanks for logging in, ' + response.name + '!';
         });
     }
 

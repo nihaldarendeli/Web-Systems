@@ -34,80 +34,41 @@ import com.google.protobuf.ByteString;
 //@GetMapping(value = "/processImages")
 public class processImages extends HttpServlet {
 
-    String errorLogs = "";
-    String anotherLog = "";
+
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         //Create dataStore instance
         DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
 
         String userID = (String)request.getParameter("userID");
-        //line spacer for error
-        //line spacer for error
-        //line spacer for error
-        //line spacer for error
-        //line spacer for error
-        //line spacer for error
+
         ArrayList<String> photoID = new ArrayList<String>(Arrays.asList(request.getParameterValues("imageID")[0].split(",")));
         ArrayList<String> imageLinks = new ArrayList<String>(Arrays.asList(request.getParameterValues("imageLinks")[0].split(",")));
-//        String [] imageLinkArray = request.getParameter("imageLinks");
-//        System.out.println(imageLinkArray.length);
-//        System.out.println(imageLinkArray);
-//        String[] myJsonData = request.getParameterValues("imageID")[0].split(",");
-//        String[] urls = myJsonData[0].split(",");
-//        System.out.println(urls.length);
-//        System.out.println(Arrays.toString(urls));
 
-//        System.out.println(imageLinks);
-//        System.out.println("userId: " + userID);
-//        System.out.println(photoID.toString());
-//        System.out.println(imageLinks.toString());
-//        System.out.println(imageLinks.size());
-//        System.out.println(photoID.size());
-//        System.out.println(photoID.get(0));
+        processImage(dataStore, imageLinks, userID, photoID);
 
-
-//        if((dataStore != null && !imageLinks.isEmpty() && userID != null && !photoID.isEmpty())){
-            processImage(dataStore, imageLinks, userID, photoID);
-//        }
-;
-
-//        RequestDispatcher dispatcher = getServletContext()
-//                .getRequestDispatcher("/app.jsp");
         RequestDispatcher dispatcher = request.getRequestDispatcher("/app.jsp");
 
-        request.setAttribute("errorLogs", errorLogs);
-        request.setAttribute("anotherLog", anotherLog);
+
         request.setAttribute("userID", userID);
         dispatcher.forward(request, response);
 
     }
 
-    private void processImage(DatastoreService dataStore, ArrayList<String> imageLinks, String UserID, ArrayList<String> photoID) throws IOException {
+    private void processImage(DatastoreService dataStore, ArrayList<String> imageLinks, String UserID, ArrayList<String> photoID)  {
 
 
 
         try {
 
             if (imageLinks != null) {
-                AtomicInteger index = new AtomicInteger();
+                int index = 0;
 
-                imageLinks.forEach((photo) -> {
-//                    System.out.print("PhotoLink: ");
-//                    System.out.println(photo);
+                for (String photo : imageLinks) {
 
-                    Entity user = ifAlreadyExists(dataStore, photoID.get(index.get()));
-                    if (user != null) {
-                        System.out.println(user.toString());
-                        anotherLog.concat("Outside:" + user.toString() + "\n");
-                        errorLogs.concat("Outside:" + user.toString() + "\n");
-                    } else {
-                        System.out.println("Outside: null");
-                        anotherLog.concat("Outside: null" + "\n");
-                        errorLogs.concat("Outside: null" + "\n");
-                    }
+                    Entity user = ifAlreadyExists(dataStore, photoID.get(index));
 
-                    if (user == null){
+                    if (user == null) {
 
                         //Retrieve dominant colors through Vision API
                         List<ColorInfo> dominantColors = null;
@@ -118,12 +79,14 @@ public class processImages extends HttpServlet {
                         }
 
                         //upload image ID, image link, and dominant colors to data store
-                        if (dominantColors != null){
-                            user = uploadToDataStore(dominantColors, photo, dataStore,  UserID, photoID.get(index.get()));
+                        if (dominantColors != null) {
+                            user = uploadToDataStore(dominantColors, photo, dataStore, UserID, photoID.get(index));
+
                         }
                     }
-                    index.getAndIncrement();
-                });
+                    index++;
+
+                }//end for
             }
 
 
@@ -141,14 +104,14 @@ public class processImages extends HttpServlet {
         String colors = dominantColors.toString();
 
 
-        if(colors != null && !colors.isEmpty()) {
+        if(dominantColors != null ) {
 
             Entity user = new Entity("User");
 
             user.setProperty("user_id", userID);
             user.setProperty("fb_image_id", photoID);
             user.setProperty("image_url", imageLink);
-            user.setProperty("colors", dominantColors);
+            user.setProperty("colors", colors);
 
             datastore.put(user);
 
@@ -164,14 +127,6 @@ public class processImages extends HttpServlet {
                         .setFilter(new FilterPredicate("fb_image_id", FilterOperator.EQUAL, photoID));
         PreparedQuery pq = datastore.prepare(q);
         Entity result = pq.asSingleEntity();
-        System.out.println("In function ");
-        if (result != null) {
-            System.out.println(result.toString());
-            errorLogs.concat("Inside Func: "+ result.toString() + "\n");
-        } else {
-            System.out.println("null");
-            errorLogs.concat("Inside Func: "+ "null" + "\n");
-        }
 
         return result;
     }
@@ -191,7 +146,6 @@ public class processImages extends HttpServlet {
 
             List<AnnotateImageRequest> requests = new ArrayList<>();
 
-///ImageSource imgSource = ImageSource.newBuilder().setGcsImageUri(gcsPath).build();
             Image img = Image.newBuilder().setContent(byteString).build();
             Feature feat = Feature.newBuilder().setType(Feature.Type.IMAGE_PROPERTIES).build();
             AnnotateImageRequest request =
@@ -217,8 +171,6 @@ public class processImages extends HttpServlet {
                     DominantColorsAnnotation colors = res.getImagePropertiesAnnotation().getDominantColors();
                     dominantColors = colors.getColorsList();
 
-
-                    //return imageResponse.getLabelAnnotationsList();
                 }
 
             }
