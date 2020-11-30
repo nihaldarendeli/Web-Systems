@@ -27,7 +27,7 @@
             //< c:set var="accessToken" value=response.authResponse.accessToken scope="request"/>
 
             // Logged into your app and Facebook
-            storeUserID
+            storeUserID();
             storeImages();
             testAPI();
         }
@@ -52,7 +52,7 @@
     //CALL FB.init
     window.fbAsyncInit = function() {
         FB.init({
-            appId      : '874548586626136',
+            appId      : '474775356772537',
             cookie     : true,  // enable cookies to allow the server to access
             // the session
             xfbml      : true,  // parse social plugins on this page
@@ -89,7 +89,7 @@
 
 
     function testAPI() {
-        console.log('Welcome!  Fetching your information.... ');
+        console.log('Welcome!  Fetching your information.... testAPI ');
         FB.api('/me', function(response) {
             console.log('Successful login for: ' + response.name);
             document.getElementById('status').innerHTML =
@@ -98,14 +98,14 @@
     }
 
     function storeUserID() {
-        var userID = null;
-        console.log('Welcome!  Fetching your information.... ');
+        var userID;
+        console.log('Welcome!  Fetching your information.... in storeUserID');
         FB.api('/me', function(response) {
-            console.log('Successful login for: ' + response.name);
+            console.log('Successful login for: ' + response.name + '\n userid:' + response.id);
             userID = response.id;
 
+            document.getElementById('userID').value = userID;
         });
-        document.getElementById('userID').value = userID;
 
         // session.setAttribute("userID", userID);
 
@@ -115,21 +115,44 @@
     // successful.  See statusChangeCallback() for when this call is made.
     function storeImages() {
 
-        console.log('Welcome!  Fetching your information.... ');
+        console.log('Welcome!  Fetching your information.... StoreImages');
         var imageLinks = new Array();
         var imageID = new Array();
-        FB.api('/me/albums?fields=photos{webp_images}', function(response) {
+        FB.api('me/albums?fields=photos.limit(3){webp_images}&limit=2', function(response) {
 
-            console.log('Successful login for: ' + response.name);
-            var photos = response.photos.data;
+            // console.log('1: Successful login for: ' + response.name);
+            var albums = response.data;
+            // console.log(albums);
 
+            albums.forEach(album => {
+                console.log("album")
+                console.log(album)
+                var photos = album.photos
+                console.log("\nphotos:")
+                console.log(photos)
+                if (photos != undefined) {
+                    photos.data.forEach(photo => {
+                        imageLinks.push(photo.webp_images[0].source)
+                        imageID.push(photo.id)
+                        // var form = document.getElementById('form_home')
+                        // let imageLinkValue = document.createElement('input')
+                        // imageLinkValue.setAttribute('type', 'hidden')
+                        // imageLinkValue.setAttribute('name', 'imageLinks')
+                        // imageLinkValue.setAttribute('value', photo.webp_images[0].source)
+                        //
+                        // let imageIDValue = document.createElement('input')
+                        // imageLinkValue.setAttribute('type', 'hidden')
+                        // imageLinkValue.setAttribute('name', 'imageID')
+                        // imageLinkValue.setAttribute('value', photo.id)
 
-            photos.forEach(photo =>{
-                imageLinks.push(photo.webp_images[0].source)
-                imageID.push(photo.id)
+                    });
+                }
             });
+
             document.getElementById('imageLinks').value = imageLinks;
             document.getElementById('imageID').value = imageID;
+            console.log(imageID);
+            console.log(imageLinks);
             //document.getElementById("form_home").submit();
 
 
@@ -164,7 +187,8 @@
     <input type="hidden" name="userID"  id="userID">
     <input type="hidden" name="imageLinks"  id="imageLinks">
     <input type="hidden" name="imageID"  id="imageID">
-
+    <input type="hidden" name="userIdArray"  value="userid1" >
+    <input type="hidden" name="userIdArray" value="userid2" >
     <div id="status">  </div>
 
 

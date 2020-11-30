@@ -19,5 +19,13 @@
         <url-pattern>/processImages</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>app</servlet-name>
+        <servlet-class>app</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>app</servlet-name>
+        <url-pattern>/app</url-pattern>
+    </servlet-mapping>
 
 </web-app>

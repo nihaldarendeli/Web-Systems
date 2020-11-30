@@ -11,8 +11,19 @@
     <title>Title</title>
 </head>
 <body>
-
+<%       String log = (String) request.getAttribute("errorLogs");
+        String log2 = (String) request.getAttribute("anotherLog");
+        out.print(log);
+        String userID = (String) request.getAttribute("userID");
+%>
+<hr/>
+<% out.print(log2);%>
 successful!
 
+${userID} <br>
+
+<hr/>
+
+${log2}
 </body>
 </html>
