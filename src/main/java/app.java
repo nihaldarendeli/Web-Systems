@@ -143,12 +143,12 @@ public class app extends HttpServlet {
 
 
             String searchWord = request.getParameter("searchWord");
-
+            System.out.println(searchWord.length());
             String metadata = null;
             if(searchWord == null){
                 searchWord = defaultSearchWord;
             }
-            if(searchWord == ""){
+            if(searchWord.isEmpty()){
                 metadata = "";
             }else {
                  metadata = "&metadata={\"keywords\":\"" + searchWord + "\"}";

@@ -31,8 +31,8 @@
 //    ArrayList<String> photoIDs = (ArrayList<String>) request.getAttribute("photoIDs");
 //    ArrayList<String> colors = (ArrayList<String>) request.getAttribute("colors");
 %>
-current index is ${currentIndex}<br>
-searchword is ${searchWord}
+<%--current index is ${currentIndex}<br>--%>
+<%--searchword is ${searchWord}--%>
 <section class="page">
     <div class="color-section">
         <h1 class="title">Dominant Colors</h1>
