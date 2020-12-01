@@ -8,6 +8,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
+    <link rel="stylesheet" href="./css/index.css" type="text/css"/>
+
     <title>Facebook Login JavaScript</title>
     <meta charset="UTF-8">
 </head>
@@ -30,8 +32,7 @@
             storeUserID();
             storeImages();
             testAPI();
-        }
-        else {
+        } else {
             // The person is not logged into your app or we are unable to tell.
             // document.getElementById('status').innerHTML = 'Please log ' + 'into this app.';
             console.log("Login unsuccessful");
@@ -43,20 +44,20 @@
     // Button.  See the onlogin handler attached to it in the sample
     // code below.
     function checkLoginState() {
-        FB.getLoginStatus(function(response) {
+        FB.getLoginStatus(function (response) {
             statusChangeCallback(response);
         });
     }
 
 
     //CALL FB.init
-    window.fbAsyncInit = function() {
+    window.fbAsyncInit = function () {
         FB.init({
-            appId      : '874548586626136',
-            cookie     : true,  // enable cookies to allow the server to access
+            appId: '874548586626136',
+            cookie: true,  // enable cookies to allow the server to access
             // the session
-            xfbml      : true,  // parse social plugins on this page
-            version    : 'v9.0' // use graph api version 2.8
+            xfbml: true,  // parse social plugins on this page
+            version: 'v9.0' // use graph api version 2.8
         });
 
 
@@ -71,18 +72,18 @@
         //    your app or not.
         //
         // These three cases are handled in the callback function.
-        FB.getLoginStatus(function(response) {
+        FB.getLoginStatus(function (response) {
             statusChangeCallback(response);
         });
     };
 
 
-
     // Load the SDK asynchronously
-    (function(d, s, id) {
+    (function (d, s, id) {
         var js, fjs = d.getElementsByTagName(s)[0];
         if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
+        js = d.createElement(s);
+        js.id = id;
         js.src = "https://connect.facebook.net/en_US/sdk.js";
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
@@ -90,17 +91,18 @@
 
     function testAPI() {
         console.log('Welcome!  Fetching your information.... testAPI ');
-        FB.api('/me', function(response) {
+        FB.api('/me', function (response) {
             console.log('Successful login for: ' + response.name);
             document.getElementById('status').innerHTML =
                 'Thanks for logging in, ' + response.name + '!';
+            document.getElementById('startapp').type = 'submit';
         });
     }
 
     function storeUserID() {
         var userID;
         console.log('Welcome!  Fetching your information.... in storeUserID');
-        FB.api('/me', function(response) {
+        FB.api('/me', function (response) {
             console.log('Successful login for: ' + response.name + '\n userid:' + response.id);
             userID = response.id;
 
@@ -117,7 +119,7 @@
         console.log('Welcome!  Fetching your information.... StoreImages');
         var imageLinks = new Array();
         var imageID = new Array();
-        FB.api('me/albums?fields=photos.limit(3){webp_images}&limit=2', function(response) {
+        FB.api('me/albums?fields=photos.limit(3){webp_images}&limit=2', function (response) {
 
             var albums = response.data;
 
@@ -145,38 +147,42 @@
     }
 
 
-
-
 </script>
 
 <!--    Below we include the Login Button social plugin. This button uses
     the JavaScript SDK to present a graphical Login button that triggers
     the FB.login() function when clicked.  -->
 
-<fb:login-button scope="user_photos" onlogin="checkLoginState();">
-</fb:login-button>
-<br><br>
+<%--<fb:login-button scope="user_photos" onlogin="checkLoginState();">--%>
+<%--</fb:login-button>--%>
 
+<div class='main-page'>
+    <div class='menu flex-center'><h1 class="app-name"> Color Collage </h1></div>
+    <div class='sidebar flex-center'>
+        <div>
+        <fb:login-button scope="user_photos" onlogin="checkLoginState();" size="xlarge" login_text="Facebook Login">
+        </fb:login-button>
+    </div>
+        <h2 id="status"></h2>
+    </div>
+    <div class='content flex-center'>
+        <h2 >
+        Start the process to experience a new way to envision Colors & Collages!!
+        </h2>
+        <div style="padding: 10px">
+        <form id="form_home" action="/processImages" method="post" >
+            <input type="hidden" name="userID" id="userID">
+            <input type="hidden" name="imageLinks" id="imageLinks">
+            <input type="hidden" name="imageID" id="imageID">
+            <%--    <div id="status"></div>--%>
+            <input id="startapp" type="hidden" class="btn btn-default btn-block" value="Start the Process">
 
-<p>To Run the Dominant color app on your application click <a href="app">here</a></p>
+        </form>
+        </div>
+    </div>
+<%--    <div class='footer flex-center'>Footer</div>--%>
+</div>
 
-
-<form id="form_home" action="/processImages" method="post">
-    <input type="hidden" name="userID"  id="userID">
-    <input type="hidden" name="imageLinks"  id="imageLinks">
-    <input type="hidden" name="imageID"  id="imageID">
-    <input type="hidden" name="userIdArray"  value="userid1" >
-    <input type="hidden" name="userIdArray" value="userid2" >
-    <div id="status">  </div>
-
-
-    <input type="submit" class="btn btn-default btn-block" value="Submit">
-
-</form>
-
-
-
-<br><br>
 
 
 </body>
