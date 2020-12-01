@@ -44,8 +44,13 @@ public class app extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/app.jsp");
         System.out.println("app doGet");
+        String currentUser = (String) request.getParameter("userID");
+        if(currentUser != null && currentUser != userID){
+            userID = currentUser;
+        }
+
         if (userID == null || userID.isEmpty()) {
-            userID = (String) request.getParameter("userID");
+            userID = currentUser;
         }
         int i = Integer.parseInt(request.getParameter("index"));
 //        System.out.println("index = " + i);

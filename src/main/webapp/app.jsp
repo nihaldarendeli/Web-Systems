@@ -37,7 +37,7 @@
         b = "#"+b.join("");
 
         colorText.innerHTML = b.toUpperCase() + ", " +color.toUpperCase()
-        colorPercent.innerHTML = parseFloat(weight).toFixed(2)
+        colorPercent.innerHTML = parseFloat(weight).toFixed(2)+"%"
 
         colorBlock.style.backgroundColor = color
     }
