@@ -26,9 +26,9 @@ import java.util.List;
 public class app extends HttpServlet {
     String userID = "";
     String defaultSearchWord = "flowers";
-/**/
+    /**/
+
     /**
-     *
      * @param request
      * @param response
      * @throws ServletException
@@ -44,7 +44,7 @@ public class app extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/app.jsp");
         System.out.println("app doGet");
-        if(userID == null || userID.isEmpty()) {
+        if (userID == null || userID.isEmpty()) {
             userID = (String) request.getParameter("userID");
         }
         int i = Integer.parseInt(request.getParameter("index"));
@@ -78,7 +78,6 @@ public class app extends HttpServlet {
 //        System.out.println(results.toString());
 
 
-
         Query query =
                 new Query("User");
 
@@ -94,7 +93,7 @@ public class app extends HttpServlet {
 
         List<Entity> results = pq.asList(FetchOptions.Builder.withDefaults());
 //        List<List<ColorInfo>> allColors = null;
-            List<ColorInfo> cols = new ArrayList<ColorInfo>();
+        List<ColorInfo> cols = new ArrayList<ColorInfo>();
 //        System.out.println(results.size());
         ArrayList<String> image_urls = new ArrayList<String>();
         ArrayList<String> photoIDs = new ArrayList<String>();
@@ -112,49 +111,64 @@ public class app extends HttpServlet {
         String api_url = "";
 //        for(int i = 0; i < results.size(); i++){
 
-            image_urls.add(results.get(i).getProperty("image_url").toString());
-            photoIDs.add(results.get(i).getProperty("fb_image_id").toString());
+        image_urls.add(results.get(i).getProperty("image_url").toString());
+        photoIDs.add(results.get(i).getProperty("fb_image_id").toString());
 
 
-            color = results.get(i).getProperty("colors").toString();
+        color = results.get(i).getProperty("colors").toString();
 
-            JsonObject jsonObject = new JsonParser().parse(color).getAsJsonObject();
+        JsonObject jsonObject = new JsonParser().parse(color).getAsJsonObject();
 
-            colors.add(jsonObject.get("data").getAsJsonArray());
-
-
-            JsonArray jArray = jsonObject.get("data").getAsJsonArray();
+        colors.add(jsonObject.get("data").getAsJsonArray());
 
 
-            int red = 0, green=0,blue=0;
-            String[] hexColors = new String[jArray.size()];
-            double[] weights = new double[jArray.size()];
+        JsonArray jArray = jsonObject.get("data").getAsJsonArray();
 
-            for (int j = 0; j < jArray.size(); j++) {
-                red =  jArray.get(j).getAsJsonObject().get("red").getAsInt();
-                green =  jArray.get(j).getAsJsonObject().get("green").getAsInt();
-                blue =  jArray.get(j).getAsJsonObject().get("blue").getAsInt();
-                weights[j] = jArray.get(j).getAsJsonObject().get("score").getAsDouble();
-                hexColors[j] = String.format("%02x%02x%02x", red, green, blue);
+
+        int red = 0, green = 0, blue = 0;
+        String[] hexColors = new String[jArray.size()];
+        double[] weights = new double[jArray.size()];
+        double total = 0;
+        for (int j = 0; j < jArray.size(); j++) {
+            red = jArray.get(j).getAsJsonObject().get("red").getAsInt();
+            green = jArray.get(j).getAsJsonObject().get("green").getAsInt();
+            blue = jArray.get(j).getAsJsonObject().get("blue").getAsInt();
+            weights[j] = jArray.get(j).getAsJsonObject().get("score").getAsDouble();
+            total += weights[j];
+            hexColors[j] = String.format("%02x%02x%02x", red, green, blue);
 //                System.out.println(hexColors[j]);
-            }
-            int limit = 20;
-            String q = String.format("limit=%d&colors[0]=%s&colors[1]=%s&colors[2]=%s&colors[3]=%s&colors[4]=%s&weights[0]=%.2f&weights[1]=%.2f&weights[2]=%.2f&weights[3]=%.2f&weights[4]=%.2f", limit,hexColors[0],hexColors[1],hexColors[2],hexColors[3],hexColors[4],weights[0],weights[1],weights[2],weights[3],weights[4]);
+        }
+        int p = 100;
+        double ratio = p / total;
+        double newTotal = 0;
+        for (int j = 0; j < weights.length; j++) {
+            weights[j] = weights[j] * ratio;
+            newTotal += weights[j];
+        }
+
+        if(newTotal > 100){
+
+            weights[weights.length-1] = (newTotal-99);
+        }
+
+        System.out.println(newTotal);
+        int limit = 50;
+        String q = String.format("limit=%d&colors[0]=%s&colors[1]=%s&colors[2]=%s&colors[3]=%s&colors[4]=%s&weights[0]=%f&weights[1]=%f&weights[2]=%f&weights[3]=%f&weights[4]=%f", limit, hexColors[0], hexColors[1], hexColors[2], hexColors[3], hexColors[4], weights[0], weights[1], weights[2], weights[3], weights[4]);
 
 
-            String searchWord = request.getParameter("searchWord");
-            System.out.println(searchWord.length());
-            String metadata = null;
-            if(searchWord == null){
-                searchWord = defaultSearchWord;
-            }
-            if(searchWord.isEmpty()){
-                metadata = "";
-            }else {
-                 metadata = "&metadata={\"keywords\":\"" + searchWord + "\"}";
-            }
-            api_url = urlEndpoint + q;
-            api_calls.add(api_url);
+        String searchWord = request.getParameter("searchWord");
+//        System.out.println(searchWord.length());
+        String metadata = null;
+        if (searchWord == null) {
+            searchWord = defaultSearchWord;
+        }
+        if (searchWord.isEmpty()) {
+            metadata = "";
+        } else {
+            metadata = "&metadata={\"keywords\":\"" + searchWord + "\"}";
+        }
+        api_url = urlEndpoint + q;
+        api_calls.add(api_url);
 //        }
 
 //        JsonObject jsonObject = new JsonParser().parse(color).getAsJsonObject();
@@ -167,7 +181,7 @@ public class app extends HttpServlet {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         System.out.println(url.toString());
-        BufferedReader r  = new BufferedReader(new InputStreamReader(conn.getInputStream(), Charset.forName("UTF-8")));
+        BufferedReader r = new BufferedReader(new InputStreamReader(conn.getInputStream(), Charset.forName("UTF-8")));
         StringBuilder sb = new StringBuilder();
         String line;
         while ((line = r.readLine()) != null) {
@@ -192,18 +206,15 @@ public class app extends HttpServlet {
         request.setAttribute("jsonArrayColors", colors);
 
 
-
-
-
         System.out.println(String.valueOf(i));
 
         request.setAttribute("currentIndex", String.valueOf(i));
 
-        int next = i+1;
+        int next = i + 1;
         String k = "";
-        if(next >= results.size()){
+        if (next >= results.size()) {
             k = "index=" + 0;
-        }else{
+        } else {
             k = "index=" + next;
         }
 

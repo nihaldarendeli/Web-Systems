@@ -48,6 +48,12 @@
                 }
             %>
             <%--    <dom-repeat style="display: none;"><template is="dom-repeat"></template></dom-repeat>--%>
+            <div id="row" class="color-row">
+                <div class="color-text">#2C0F17, &nbsp;RGB(44, 15,
+                    23)</div>
+                <div class="color-percent">40%</div>
+                <div class="color-block" style="width:auto;background-color:#2C0F17;">&nbsp;</div>
+            </div>
         </div>
     </div>
     <div class="current-picture">
