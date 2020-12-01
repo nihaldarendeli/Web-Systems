@@ -1,7 +1,8 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.google.gson.JsonObject" %>
 <%@ page import="com.google.gson.JsonArray" %>
-<%@ page import="java.util.List" %><%--
+<%@ page import="java.util.List" %>
+<%@ page import="java.awt.*" %><%--
   Created by IntelliJ IDEA.
   User: atiyakailany
   Date: 11/25/20
@@ -15,6 +16,33 @@
     <title>Title</title>
 </head>
 <body>
+<script>
+
+    function mouseOver(x) {
+        // alert("hello");
+        // console.log(x)
+        let color = x.style.backgroundColor
+        let weight = x.style.width
+
+        let colorText = document.getElementById("colorText")
+        let colorPercent = document.getElementById("colorPercent")
+        let colorBlock = document.getElementById("colorBlock")
+
+        var a = color.split("(")[1].split(")")[0];
+        a = a.split(",");
+        var b = a.map(function(x){             //For each array element
+            x = parseInt(x).toString(16);      //Convert to a base16 string
+            return (x.length==1) ? "0"+x : x;  //Add zero if we get only one character
+        })
+        b = "#"+b.join("");
+
+        colorText.innerHTML = b.toUpperCase() + ", " +color.toUpperCase()
+        colorPercent.innerHTML = parseFloat(weight).toFixed(2)
+
+        colorBlock.style.backgroundColor = color
+    }
+
+</script>
 <%
 
     //    JsonArray color = (JsonArray) request.getAttribute("jsonArrayColors");
@@ -36,23 +64,30 @@
 <section class="page">
     <div class="color-section">
         <h1 class="title">Dominant Colors</h1>
+        <div class="color-wrapper">
+            <div id="test" class="color-container">
+                <%
+                    String colors[] = (String[]) request.getAttribute("colors");
+                    double weights[] = (double[]) request.getAttribute("weights");
 
-        <div class="color-container">
-            <%
-                String colors[] = (String[]) request.getAttribute("colors");
-                double weights[] = (double[]) request.getAttribute("weights");
-
-                for (int i = 0; i < colors.length; i++) {
+//                    String hex = "0x".concat(colors[0]);
+//                    String colText = Color.decode(hex).getRed();
+//                    String = colors[0].toUpperCase();
+                    for (int i = 0; i < colors.length; i++) {
 //            out.println(String.format("<div class=\"color\" style=\"width:%2.f%;background-color:%s;\"></div>",weights[i],colors[i]));
-                    out.println("<div class=\"color\" style=\"width:" + weights[i] + "%;background-color:" + colors[i] + ";\"></div>");
-                }
-            %>
-            <%--    <dom-repeat style="display: none;"><template is="dom-repeat"></template></dom-repeat>--%>
+//                        out.println("<div onmouseover=\"mouseOver("+weights[i]+ "," + colors[i] + ")\" class=\"color\" style=\"width:" + weights[i] + "%;background-color:" + colors[i] + ";\"></div>");
+
+                        out.println("<div onmouseover=\"mouseOver(this)\" class=\"color\" style=\"width:" + weights[i] + "%;background-color:#" + colors[i] + ";\"></div>");
+                    }
+                %>
+                <%--    <dom-repeat style="display: none;"><template is="dom-repeat"></template></dom-repeat>--%>
+            </div>
             <div id="row" class="color-row">
-                <div class="color-text">#2C0F17, &nbsp;RGB(44, 15,
-                    23)</div>
-                <div class="color-percent">40%</div>
-                <div class="color-block" style="width:auto;background-color:#2C0F17;">&nbsp;</div>
+                <div id="colorText" class="color-text">
+                #${colors[0].toUpperCase()}, RGB(${Color.decode("0x".concat(colors[0])).getRed()}, ${Color.decode("0x".concat(colors[0])).getGreen()}, ${Color.decode("0x".concat(colors[0])).getBlue()})
+                </div>
+                <div id="colorPercent" class="color-percent">${String.format("%.2f",weights[0])}</div>
+                <div id="colorBlock" class="color-block" style="width:auto;background-color: ${colors[0]}"></div>
             </div>
         </div>
     </div>
@@ -66,10 +101,10 @@
 <section class="page">
     <div class="flex-center">
         <div>Current filter: <b>${searchWord}</b></div>
-        <form id="form_home" action="${pageContext.request.contextPath}/app" method="get" >
-            <input  type="text" name="searchWord" id="searchWord">
+        <form id="form_home" action="${pageContext.request.contextPath}/app" method="get">
+            <input type="text" name="searchWord" id="searchWord">
             <input type="hidden" name="index" id="index" value="${currentIndex}">
-<%--            <input type="hidden" name="imageID" id="imageID">--%>
+            <%--            <input type="hidden" name="imageID" id="imageID">--%>
             <%--    <div id="status"></div>--%>
             <input id="filter" type="submit" class="btn btn-default btn-block" value="Filter">
 
@@ -103,13 +138,14 @@
         %>
     </table>
     <div style="padding: 15px">
-        <a style="text-decoration: none"href="app?${nextIndex}&searchWord=${searchWord}">
+        <a style="text-decoration: none" href="app?${nextIndex}&searchWord=${searchWord}">
             <div class="next-button">
                 Next
             </div>
         </a>
     </div>
 </section>
+
 
 
 </body>

@@ -146,9 +146,8 @@ public class app extends HttpServlet {
             newTotal += weights[j];
         }
 
-        if(newTotal > 100){
-
-            weights[weights.length-1] = (newTotal-99);
+        if(newTotal >= 100){
+            weights[weights.length-1] -= (newTotal-99.9);
         }
 
         System.out.println(newTotal);

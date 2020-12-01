@@ -119,7 +119,7 @@
         console.log('Welcome!  Fetching your information.... StoreImages');
         var imageLinks = new Array();
         var imageID = new Array();
-        FB.api('me/albums?fields=photos.limit(5){webp_images}&limit=3', function (response) {
+        FB.api('me/albums?fields=photos.limit(10){webp_images}&limit=1', function (response) {
 
             var albums = response.data;
 
