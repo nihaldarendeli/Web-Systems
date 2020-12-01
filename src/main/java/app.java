@@ -83,6 +83,7 @@ public class app extends HttpServlet {
 
         Query.Filter userFilter = new Query.FilterPredicate("user_id", Query.FilterOperator.EQUAL, userID);
 
+        query.setFilter(userFilter);
 //        Query.Filter colorFilter = new Query.FilterPredicate("colors", Query.FilterOperator.EQUAL, colors);
 
 //        Query.Filter imageLink = new Query.FilterPredicate("image_url", Query.FilterOperator.EQUAL, imageLink);
@@ -146,8 +147,8 @@ public class app extends HttpServlet {
             newTotal += weights[j];
         }
 
-        if(newTotal >= 100){
-            weights[weights.length-1] -= (newTotal-99.9);
+        if(newTotal >= 99.99){
+            weights[weights.length-1] -= (newTotal-99.5);
         }
 
         System.out.println(newTotal);
