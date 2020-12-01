@@ -36,6 +36,12 @@ import com.google.protobuf.ByteString;
 public class processImages extends HttpServlet {
 
 
+    /**
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         //Create dataStore instance
@@ -51,9 +57,11 @@ public class processImages extends HttpServlet {
 
 //        RequestDispatcher dispatcher = getServletContext()
 //                .getRequestDispatcher("/app.jsp");
+        String firstImage = "0";
+//        request.setAttribute("userID", userID);
+//        request.setAttribute("index", firstImage);
 
-        request.setAttribute("userID", userID);
-        response.sendRedirect("/app?userID="+userID);
+        response.sendRedirect("/app?userID="+userID+"&index=0");
 //        response.sendRedirect(response.getContextPath() + "/redirected");
 
 //        dispatcher.forward(request, response);
