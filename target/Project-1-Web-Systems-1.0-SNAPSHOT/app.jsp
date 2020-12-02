@@ -37,7 +37,7 @@
         b = "#"+b.join("");
 
         colorText.innerHTML = b.toUpperCase() + ", " +color.toUpperCase()
-        colorPercent.innerHTML = parseFloat(weight).toFixed(2)
+        colorPercent.innerHTML = parseFloat(weight).toFixed(2)+"%"
 
         colorBlock.style.backgroundColor = color
     }
@@ -52,7 +52,6 @@
     String photoID = (String) request.getAttribute("photoID");
 //    String THISFUCKINGVARIABLE = String.valueOf(request.getAttribute("currentIndex"));
     String currentIndex = (String) request.getAttribute("currentIndex");
-
     String nextIndex = (String) request.getAttribute("nextIndex");
     String searchWord = (String) request.getAttribute("searchWord");
 
@@ -102,8 +101,9 @@
     <div class="flex-center">
         <div>Current filter: <b>${searchWord}</b></div>
         <form id="form_home" action="${pageContext.request.contextPath}/app" method="get">
-            <input type="text" name="searchWord" id="searchWord">
+            <input type="hidden" name="userID" id="userID" value="${userID}">
             <input type="hidden" name="index" id="index" value="${currentIndex}">
+            <input type="text" name="searchWord" id="searchWord">
             <%--            <input type="hidden" name="imageID" id="imageID">--%>
             <%--    <div id="status"></div>--%>
             <input id="filter" type="submit" class="btn btn-default btn-block" value="Filter">
@@ -138,7 +138,7 @@
         %>
     </table>
     <div style="padding: 15px">
-        <a style="text-decoration: none" href="app?${nextIndex}&searchWord=${searchWord}">
+        <a style="text-decoration: none" href="app?userID=${userID}&${nextIndex}&searchWord=${searchWord}">
             <div class="next-button">
                 Next
             </div>

@@ -24,7 +24,6 @@ import java.util.List;
 
 @WebServlet("/app")
 public class app extends HttpServlet {
-    String userID = "";
     String defaultSearchWord = "flowers";
     /**/
 
@@ -44,13 +43,9 @@ public class app extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/app.jsp");
         System.out.println("app doGet");
-        String currentUser = (String) request.getParameter("userID");
-        if(currentUser != null && currentUser != userID){
-            userID = currentUser;
-        }
-
-        if (userID == null || userID.isEmpty()) {
-            userID = currentUser;
+        String userID = (String) request.getParameter("userID");
+        if(userID == null){
+            userID = "";
         }
         int i = Integer.parseInt(request.getParameter("index"));
 //        System.out.println("index = " + i);
