@@ -8,6 +8,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-322HJRMC6C');
+    </script>
+
     <link rel="stylesheet" href="./css/index.css" type="text/css"/>
 
     <title>Facebook Login JavaScript</title>
