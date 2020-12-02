@@ -28,20 +28,20 @@
         console.log('statusChangeCallback');
         console.log(response);
         // The response object is returned with a status field that lets the
-        // app know the current login status of the person.
+        // com.groupFive.web.app know the current login status of the person.
         // Full docs on the response object can be found in the documentation
         // for FB.getLoginStatus().
         if (response.status === 'connected') {
             //session.setAttribute("accessToken", response.authResponse.accessToken);
             //< c:set var="accessToken" value=response.authResponse.accessToken scope="request"/>
 
-            // Logged into your app and Facebook
+            // Logged into your com.groupFive.web.app and Facebook
             storeUserID();
             storeImages();
             testAPI();
         } else {
-            // The person is not logged into your app or we are unable to tell.
-            // document.getElementById('status').innerHTML = 'Please log ' + 'into this app.';
+            // The person is not logged into your com.groupFive.web.app or we are unable to tell.
+            // document.getElementById('status').innerHTML = 'Please log ' + 'into this com.groupFive.web.app.';
             console.log("Login unsuccessful");
 
         }
@@ -73,10 +73,10 @@
         // person visiting this page and can return one of three states to
         // the callback you provide.  They can be:
         //
-        // 1. Logged into your app ('connected')
-        // 2. Logged into Facebook, but not your app ('not_authorized')
+        // 1. Logged into your com.groupFive.web.app ('connected')
+        // 2. Logged into Facebook, but not your com.groupFive.web.app ('not_authorized')
         // 3. Not logged into Facebook and can't tell if they are logged into
-        //    your app or not.
+        //    your com.groupFive.web.app or not.
         //
         // These three cases are handled in the callback function.
         FB.getLoginStatus(function (response) {
@@ -160,9 +160,6 @@
     the JavaScript SDK to present a graphical Login button that triggers
     the FB.login() function when clicked.  -->
 
-<%--<fb:login-button scope="user_photos" onlogin="checkLoginState();">--%>
-<%--</fb:login-button>--%>
-
 <div class='main-page'>
     <div class='menu flex-center'><h1 class="app-name"> Color Collage </h1></div>
     <div class='sidebar flex-center'>
@@ -187,7 +184,6 @@
         </form>
         </div>
     </div>
-<%--    <div class='footer flex-center'>Footer</div>--%>
 </div>
 
 

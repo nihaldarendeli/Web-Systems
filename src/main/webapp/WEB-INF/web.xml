@@ -10,22 +10,22 @@
 
     <servlet>
         <servlet-name>processImages</servlet-name>
-        <servlet-class>processImages</servlet-class>
+        <servlet-class>com.groupFive.web.processImages</servlet-class>
     </servlet>
 
 
     <servlet-mapping>
         <servlet-name>processImages</servlet-name>
-        <url-pattern>/processImages</url-pattern>
+        <url-pattern>/com.groupFive.web.processImages</url-pattern>
     </servlet-mapping>
 
     <servlet>
         <servlet-name>app</servlet-name>
-        <servlet-class>app</servlet-class>
+        <servlet-class>com.groupFive.web.app</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>app</servlet-name>
-        <url-pattern>/app</url-pattern>
+        <url-pattern>/com.groupFive.web.app</url-pattern>
     </servlet-mapping>
 
 </web-app>

@@ -1,3 +1,5 @@
+package com.groupFive.web;
+
 import com.google.api.client.util.ArrayMap;
 import com.google.appengine.api.datastore.*;
 import com.google.cloud.datastore.EntityQuery;
@@ -22,61 +24,53 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@WebServlet("/app")
+@WebServlet("/com.groupFive.web.app")
 public class app extends HttpServlet {
     String defaultSearchWord = "flowers";
-    /**/
+
 
     /**
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
+     * This is a basic doPost function that triggers the app JSP page.<br>
+     * @param request request feed sent from app.java
+     * @param response response feed sent from app.java
+     * @throws ServletException Handle Servlet Exceptions
+     * @throws IOException Handle IO Exceptions
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RequestDispatcher dispatcher = getServletContext()
-                .getRequestDispatcher("/app.jsp");
-        System.out.println("app doPost");
+                .getRequestDispatcher("/com.groupFive.web.app.jsp");
+        System.out.println("com.groupFive.web.app doPost");
         dispatcher.forward(request, response);
     }
 
+    /**
+     * This is the main and only function in this class. It does a variety of opertations, most importantly
+     * is calling the Goolge Data Store, setting filters and obtaining the required information. In addition,
+     * it uses that information to construct the TinEye API call, to receive images with colors similar to
+     * the User's dominant colors that we have provided.<br>
+     *
+     * Also, it does indexing to specify which image the user wants the app to process, and displays only
+     * that specific information for the specified/displayed image. In addition, this function also calculates
+     * a user-inputed tag that personalizes the generated images according to that tag, and adjusts the API call
+     * accordingly every time.<br>
+     *
+     * Finally, it passes all that information to app.JSP to construct a user interface that shows all the
+     * processing mentioned above.<br>
+     * @param request request feed sent from app.java
+     * @param response response feed sent from app.java
+     * @throws ServletException Handle Servlet Exceptions
+     * @throws IOException Handle IO Exceptions
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/app.jsp");
-        System.out.println("app doGet");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/com.groupFive.web.app.jsp");
+        System.out.println("com.groupFive.web.app doGet");
         String userID = (String) request.getParameter("userID");
         if(userID == null){
             userID = "";
         }
         int i = Integer.parseInt(request.getParameter("index"));
-//        System.out.println("index = " + i);
-//        System.out.println("userID:"+userID);
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-//        Query q =
-//                new Query("User")
-//                        .setFilter(new Query.FilterPredicate("user_id", Query.FilterOperator.EQUAL, userID));
-//        PreparedQuery pq = datastore.prepare(q);
-//        Entity result = pq.asSingleEntity();
-
-//        EntityQuery.Builder queryBuilder = Query.newEntityQueryBuilder().setKind("User")
-//                .setLimit(pageSize);
-//        request.setAttribute("userID", userID);
-//
-//        Query<Entity> query = Query.newEntityQueryBuilder()
-//                .setKind("User")
-//                .setFilter(CompositeFilter.and(
-//                        PropertyFilter.eq("done", false), PropertyFilter.ge("priority", 4)))
-//                .setOrderBy(OrderBy.desc("priority"))
-//                .build();ConceptsTest.java
-//        Query q =
-//                new Query("User")
-//                        .setFilter(new Query.FilterPredicate("userID", Query.FilterOperator.EQUAL, userID));
-//        PreparedQuery pq = datastore.prepare(q);
-//
-//        List<Entity> results = pq.asList(FetchOptions.Builder.withDefaults());
-//        System.out.println(results.toString());
-
 
         Query query =
                 new Query("User");
@@ -84,33 +78,23 @@ public class app extends HttpServlet {
         Query.Filter userFilter = new Query.FilterPredicate("user_id", Query.FilterOperator.EQUAL, userID);
 
         query.setFilter(userFilter);
-//        Query.Filter colorFilter = new Query.FilterPredicate("colors", Query.FilterOperator.EQUAL, colors);
-
-//        Query.Filter imageLink = new Query.FilterPredicate("image_url", Query.FilterOperator.EQUAL, imageLink);
-
-//        Query.Filter photoID = new Query.FilterPredicate("fb_image_id", Query.FilterOperator.EQUAL, photoID);
 
         PreparedQuery pq = datastore.prepare(query);
 
         List<Entity> results = pq.asList(FetchOptions.Builder.withDefaults());
-//        List<List<ColorInfo>> allColors = null;
         List<ColorInfo> cols = new ArrayList<ColorInfo>();
-//        System.out.println(results.size());
         ArrayList<String> image_urls = new ArrayList<String>();
         ArrayList<String> photoIDs = new ArrayList<String>();
-//        ArrayList<String> colors = new ArrayList<String>();
         ArrayList<JsonArray> colors = new ArrayList<JsonArray>();
         ArrayList<String> api_calls = new ArrayList<String>();
 
         ArrayList<String> hex_array = new ArrayList<String>();
 
         String color = null;
-//        String colors = null;
 
         Gson g = new Gson();
         String urlEndpoint = "https://labs.tineye.com/multicolr/rest/color_search/?";
         String api_url = "";
-//        for(int i = 0; i < results.size(); i++){
 
         image_urls.add(results.get(i).getProperty("image_url").toString());
         photoIDs.add(results.get(i).getProperty("fb_image_id").toString());
@@ -137,7 +121,6 @@ public class app extends HttpServlet {
             weights[j] = jArray.get(j).getAsJsonObject().get("score").getAsDouble();
             total += weights[j];
             hexColors[j] = String.format("%02x%02x%02x", red, green, blue);
-//                System.out.println(hexColors[j]);
         }
         int p = 100;
         double ratio = p / total;
@@ -169,12 +152,7 @@ public class app extends HttpServlet {
         }
         api_url = urlEndpoint + q;
         api_calls.add(api_url);
-//        }
 
-//        JsonObject jsonObject = new JsonParser().parse(color).getAsJsonObject();
-//
-////        System.out.println(jsonObject.get("data").getAsJsonArray().get(0).getAsJsonObject().get("red"));
-////        JsonArray jsonArrayColors = jsonObject.get("data").getAsJsonArray();
 
 
         URL url = new URL(api_url + metadata);
@@ -189,16 +167,13 @@ public class app extends HttpServlet {
         }
         Gson gson = new Gson();
         String jsonString = sb.toString();
-//        JsonObject jsonObject = gson.fromJson(sb.toString(), JsonObject.class);
         JsonObject jObject = JsonParser.parseString(jsonString).getAsJsonObject();
         final JsonArray data = jObject.getAsJsonArray("result");
-//        System.out.println("result : " + data);
-//        System.out.println("count : " + jObject.get("count"));
+
         List<String> list = new ArrayList<String>();
         for (JsonElement element : data) {
             list.add("https://img.tineye.com/flickr-images/?filepath=labs-flickr-public/images/" + ((JsonObject) element).get("filepath").getAsString());
         }
-//        System.out.println(list.toString());
         request.setAttribute("images", list);
         request.setAttribute("searchWord", searchWord);
 
@@ -227,9 +202,7 @@ public class app extends HttpServlet {
         request.setAttribute("colors", hexColors);
         request.setAttribute("weights", weights);
         request.setAttribute("userID", userID);
-//        System.out.println(image_urls.toString());
-//        System.out.println(photoIDs.toString());
-//        System.out.println(colors.toString());
+
         dispatcher.forward(request, response);
     }
 }

@@ -1,3 +1,5 @@
+package com.groupFive.web;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -31,16 +33,17 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.protobuf.ByteString;
 
-@WebServlet("/processImages")
-//@GetMapping(value = "/processImages")
+@WebServlet("/com.groupFive.web.processImages")
 public class processImages extends HttpServlet {
 
-
     /**
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
+     * This function is reposible for contacting the data base as well as the
+     * cloud vision API. Finally, it sends the obtained data to the front end
+     * JSP for user interface implementation.<br>
+     * @param request request feed sent from home.jsp
+     * @param response response feed sent from home.jsp
+     * @throws ServletException Handle Servlet Exceptions
+     * @throws IOException Handle IO Exceptions
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -55,19 +58,22 @@ public class processImages extends HttpServlet {
         processImage(dataStore, imageLinks, userID, photoID);
 
 
-//        RequestDispatcher dispatcher = getServletContext()
-//                .getRequestDispatcher("/app.jsp");
         String firstImage = "0";
-//        request.setAttribute("userID", userID);
-//        request.setAttribute("index", firstImage);
 
-        response.sendRedirect("/app?userID="+userID+"&index=0");
-//        response.sendRedirect(response.getContextPath() + "/redirected");
 
-//        dispatcher.forward(request, response);
+        response.sendRedirect("/com.groupFive.web.app?userID="+userID+"&index=0");
 
     }
 
+
+    /**
+     * This function receives the specified parameters as arguments, and makes two consecutive calls,
+     * one call to the vision API and the second to the data store.<br>
+     * @param dataStore Google Data Store Service
+     * @param imageLinks String image URL retrieved from Facebook
+     * @param UserID Passed user's identification number
+     * @param photoID Passed photo's identification number
+     */
     private void processImage(DatastoreService dataStore, ArrayList<String> imageLinks, String UserID, ArrayList<String> photoID)  {
 
 
@@ -85,12 +91,9 @@ public class processImages extends HttpServlet {
 
                         //Retrieve dominant colors through Vision API
                         List<ColorInfo> dominantColors = null;
-//                        String json = null;
                         try {
                             dominantColors = getDominantColors(photo);
-//                            Gson gson = new Gson();
-//                            json = gson.toJson(dominantColors);
-//                            System.out.println(index +":"+json);
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -116,9 +119,19 @@ public class processImages extends HttpServlet {
     }//end func
 
     //Saving to data store.
+    /**
+     * This function receives the data obtained from the data store and stores it in
+     * the google data store. In addition, it builds a json string using the obtained
+     * information and saves it to the data store. Instead of the returned ColorInfo object
+     * that the cloud vision API returns.<br>
+     * @param dominantColors ColorInfo Object, returned from vision API
+     * @param imageLink String image URL retrieved from Facebook
+     * @param datastore Google Data Store Service
+     * @param userID Passed user's identification number
+     * @param photoID Passed photo's identification number
+     * @return Google Data Store Entity or null
+     */
     private Entity uploadToDataStore(List<ColorInfo> dominantColors, String imageLink, DatastoreService datastore, String userID, String photoID) {
-
-        //String colors = dominantColors.toString();
 
 
         if(dominantColors != null ) {
@@ -132,10 +145,7 @@ public class processImages extends HttpServlet {
                 if(i+1 < 5) jsonArray = jsonArray.concat(",");
             }
             jsonArray = jsonArray.concat("]}");
-//            String json1 = String.format("{\"red\":%f,\"green\":%f,\"blue\":%f,\"pixel\":%f}", dominantColors.get(1).getColor().getRed(),dominantColors.get(1).getColor().getGreen(),dominantColors.get(1).getColor().getBlue(),dominantColors.get(1).getPixelFraction()*100 );
-//            String json2 = String.format("{\"red\":%f,\"green\":%f,\"blue\":%f,\"pixel\":%f}", dominantColors.get(2).getColor().getRed(),dominantColors.get(2).getColor().getGreen(),dominantColors.get(2).getColor().getBlue(),dominantColors.get(2).getPixelFraction()*100 );
-////            String jsonArray = "[" + json0 + "," + json1 + "," + json2 + "]";
-//            System.out.println(jsonArray);
+
 
             user.setProperty("user_id", userID);
             user.setProperty("fb_image_id", photoID);
@@ -150,6 +160,13 @@ public class processImages extends HttpServlet {
         return null;
     }
 
+    /**
+     * This function checks if the passed photo is already stored in the Google Data Store. And
+     * returns a Data Store entity accordingly.<br>
+     * @param datastore Google Data Store Service
+     * @param photoID Passed photo's identification number
+     * @return Google Data Store Entity
+     */
     private synchronized Entity ifAlreadyExists(DatastoreService datastore, String photoID) {
         Query q =
                 new Query("User")
@@ -160,14 +177,30 @@ public class processImages extends HttpServlet {
         return result;
     }
 
+    /**
+     * This function receives a String url and converts it to a byte [] for
+     * purposes of contacting the vision API<br>
+     * @param url String image URL retrieved from Facebook
+     * @return byte[] array
+     * @throws Exception Handle Exceptions
+     */
     public static byte[] downloadFile(URL url) throws Exception {
         try (InputStream in = url.openStream()) {
-//            System.out.println(url);
             byte[] bytes = IOUtils.toByteArray(in);
             return bytes;
         }
     }
 
+
+    /**
+     * This function receives a String link to an image, then proceeds to call the
+     * downloadFile function which returns a byte []. Then using that, calls the cloud
+     * vision API requesting the IMAGE_PROPERTIES type and stores the returned result
+     * in a ColorInfo object. This object is then returned to the calling function.<br>
+     * @param imageLink String image URL retrieved from Facebook
+     * @return ColorInfo Object, returned from vision API
+     * @throws Exception Handle Exceptions
+     */
     private List<ColorInfo> getDominantColors(String imageLink) throws Exception {
 
             byte[]  imgBytes = downloadFile(new URL(imageLink));
