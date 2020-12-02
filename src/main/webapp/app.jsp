@@ -19,8 +19,6 @@
 <script>
 
     function mouseOver(x) {
-        // alert("hello");
-        // console.log(x)
         let color = x.style.backgroundColor
         let weight = x.style.width
 
@@ -45,18 +43,14 @@
 </script>
 <%
 
-    //    JsonArray color = (JsonArray) request.getAttribute("jsonArrayColors");
     String userID = (String) request.getAttribute("userID");
     String image_url = (String) request.getAttribute("image_url");
     String api_call = (String) request.getAttribute("api_call");
     String photoID = (String) request.getAttribute("photoID");
-//    String THISFUCKINGVARIABLE = String.valueOf(request.getAttribute("currentIndex"));
     String currentIndex = (String) request.getAttribute("currentIndex");
     String nextIndex = (String) request.getAttribute("nextIndex");
     String searchWord = (String) request.getAttribute("searchWord");
 
-//    ArrayList<String> photoIDs = (ArrayList<String>) request.getAttribute("photoIDs");
-//    ArrayList<String> colors = (ArrayList<String>) request.getAttribute("colors");
 %>
 <%--current index is ${currentIndex}<br>--%>
 <%--searchword is ${searchWord}--%>
@@ -69,17 +63,10 @@
                     String colors[] = (String[]) request.getAttribute("colors");
                     double weights[] = (double[]) request.getAttribute("weights");
 
-//                    String hex = "0x".concat(colors[0]);
-//                    String colText = Color.decode(hex).getRed();
-//                    String = colors[0].toUpperCase();
                     for (int i = 0; i < colors.length; i++) {
-//            out.println(String.format("<div class=\"color\" style=\"width:%2.f%;background-color:%s;\"></div>",weights[i],colors[i]));
-//                        out.println("<div onmouseover=\"mouseOver("+weights[i]+ "," + colors[i] + ")\" class=\"color\" style=\"width:" + weights[i] + "%;background-color:" + colors[i] + ";\"></div>");
-
                         out.println("<div onmouseover=\"mouseOver(this)\" class=\"color\" style=\"width:" + weights[i] + "%;background-color:#" + colors[i] + ";\"></div>");
                     }
                 %>
-                <%--    <dom-repeat style="display: none;"><template is="dom-repeat"></template></dom-repeat>--%>
             </div>
             <div id="row" class="color-row">
                 <div id="colorText" class="color-text">
@@ -104,24 +91,12 @@
             <input type="hidden" name="userID" id="userID" value="${userID}">
             <input type="hidden" name="index" id="index" value="${currentIndex}">
             <input type="text" name="searchWord" id="searchWord">
-            <%--            <input type="hidden" name="imageID" id="imageID">--%>
-            <%--    <div id="status"></div>--%>
             <input id="filter" type="submit" class="btn btn-default btn-block" value="Filter">
 
         </form>
     </div>
     <table align="center">
-        <%--    <tr bgcolor="#949494">--%>
-        <%--        <th>images</th>--%>
-        <%--    </tr>--%>
         <%
-            JsonObject S = (JsonObject) request.getAttribute("apiData");
-////            JsonObject json = (JsonObject) request.getAttribute("data");
-//            if(json != null) {
-//                out.print("<tr><td>" + json + "</td>\n");
-//            }else{
-//                out.print("<tr><td>json is null</td>\n");
-//            }
             List<String> images = (List<String>) request.getAttribute("images");
 
             int numCol = 10;

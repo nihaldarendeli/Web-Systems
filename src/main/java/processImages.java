@@ -1,22 +1,12 @@
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
-
 import java.io.InputStream;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.gson.Gson;
 import com.google.cloud.vision.v1.*;
 import com.google.cloud.vision.v1.DominantColorsAnnotation;
 import org.apache.commons.io.IOUtils;
@@ -54,24 +44,12 @@ public class processImages extends HttpServlet {
 
         processImage(dataStore, imageLinks, userID, photoID);
 
-
-//        RequestDispatcher dispatcher = getServletContext()
-//                .getRequestDispatcher("/app.jsp");
-        String firstImage = "0";
-//        request.setAttribute("userID", userID);
-//        request.setAttribute("index", firstImage);
-
         response.sendRedirect("/app?userID="+userID+"&index=0");
-//        response.sendRedirect(response.getContextPath() + "/redirected");
 
-//        dispatcher.forward(request, response);
 
     }
 
     private void processImage(DatastoreService dataStore, ArrayList<String> imageLinks, String UserID, ArrayList<String> photoID)  {
-
-
-
         try {
 
             if (imageLinks != null) {
@@ -85,12 +63,8 @@ public class processImages extends HttpServlet {
 
                         //Retrieve dominant colors through Vision API
                         List<ColorInfo> dominantColors = null;
-//                        String json = null;
                         try {
                             dominantColors = getDominantColors(photo);
-//                            Gson gson = new Gson();
-//                            json = gson.toJson(dominantColors);
-//                            System.out.println(index +":"+json);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -118,9 +92,6 @@ public class processImages extends HttpServlet {
     //Saving to data store.
     private Entity uploadToDataStore(List<ColorInfo> dominantColors, String imageLink, DatastoreService datastore, String userID, String photoID) {
 
-        //String colors = dominantColors.toString();
-
-
         if(dominantColors != null ) {
 
             Entity user = new Entity("User");
@@ -132,10 +103,6 @@ public class processImages extends HttpServlet {
                 if(i+1 < 5) jsonArray = jsonArray.concat(",");
             }
             jsonArray = jsonArray.concat("]}");
-//            String json1 = String.format("{\"red\":%f,\"green\":%f,\"blue\":%f,\"pixel\":%f}", dominantColors.get(1).getColor().getRed(),dominantColors.get(1).getColor().getGreen(),dominantColors.get(1).getColor().getBlue(),dominantColors.get(1).getPixelFraction()*100 );
-//            String json2 = String.format("{\"red\":%f,\"green\":%f,\"blue\":%f,\"pixel\":%f}", dominantColors.get(2).getColor().getRed(),dominantColors.get(2).getColor().getGreen(),dominantColors.get(2).getColor().getBlue(),dominantColors.get(2).getPixelFraction()*100 );
-////            String jsonArray = "[" + json0 + "," + json1 + "," + json2 + "]";
-//            System.out.println(jsonArray);
 
             user.setProperty("user_id", userID);
             user.setProperty("fb_image_id", photoID);
@@ -162,7 +129,6 @@ public class processImages extends HttpServlet {
 
     public static byte[] downloadFile(URL url) throws Exception {
         try (InputStream in = url.openStream()) {
-//            System.out.println(url);
             byte[] bytes = IOUtils.toByteArray(in);
             return bytes;
         }
