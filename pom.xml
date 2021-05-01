@@ -112,15 +112,25 @@
 
     </dependencies>
 
-
-
-    <build>
+        <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.3.0</version>
             </plugin>
-        </plugins>
+
+        <plugin>
+   <groupId>com.google.cloud.tools</groupId>
+   <artifactId>appengine-maven-plugin</artifactId>
+   <version>2.2.0</version>
+   <configuration>
+    <deploy.projectId>project-2-group-5</deploy.projectId>
+    <deploy.version>2</deploy.version>
+  </configuration>
+</plugin>
+
+    </plugins>
     </build>
+
 </project>
